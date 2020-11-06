@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import streamlit as st
 
 class Converter:
     
@@ -46,7 +47,7 @@ class Converter:
         self.image_transformed = Image.fromarray(img_copy.astype('uint8'))
         
         # Save Image
-        img_transformed.save('yiq.png')
+        #img_transformed.save('yiq.png')
         
         
         # Return Image, Image_Array
@@ -84,7 +85,7 @@ class Converter:
         self.image_transformed = Image.fromarray(img_copy.astype('uint8'))
         
         # Save Image
-        img_transformed.save('rgb.png')
+        #img_transformed.save('rgb.png')
         
         # Return Image, Image_Array
         return img_transformed, img_copy
@@ -153,11 +154,10 @@ class Converter:
         
         
     
-    def visualize_image(self):
+    def visualize_image(self, image, capt = 'Image'):
         
-        
-        return None
+        st.image(image, caption=capt, use_column_width=True)
     
-    def visualize_all_process(self):
-        
-        return None
+    def visualize_all_process(self, original_img, yiq_image, yiq2rgb_img, capt = 'Transformation'):
+
+        st.image([original_img, yiq_image, yiq2rgb_img], caption=capt, width=219)
