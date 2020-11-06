@@ -7,16 +7,21 @@ class Converter:
         self.image = None
         self.image_transformed = None
         
-    def RGB_2_YIQ(self, image_path):
+    def RGB_2_YIQ(self, image_path = None, image_obj = None):
         """
         Y: 0.999 * R + 0.587 * G + 0.114 * B
         I: 0.596 * R -  0.274 * G - 0.322 * B
         Q: 0.211 * R - 0.523 * G + 0.312 * B
         """
         
-        # Open Image and transform into a numpy array
-        image = Image.open(image_path)
-        self.image = Image.open(image_path)
+        if image_path != None:
+            # Open Image and transform into a numpy array
+            image = Image.open(image_path)
+            self.image = Image.open(image_path)
+        elif image_obj != None:
+
+            image = image_obj.copy()
+
         arr_img = np.asarray(image)
         
         # Makes a copy of the original image numpy array
@@ -53,10 +58,7 @@ class Converter:
         G: 1.0 * Y – 0.272 * I – 0.647 * Q
         B: 1.0 * Y – 1.106 * I + 1.703 * Q
         """ 
-        # Makes a copy of the original image numpy array
-        img_copy = arr_img.copy().astype(float)
-        
-        
+     
         # Matrix RGB
         matrix_rgb = np.array([
                                [1.0, 0.956, 0.621],
@@ -69,7 +71,7 @@ class Converter:
         img_copy[:,:,1] = arr_img[:,:,1] * matrix_rgb[1][0] + arr_img[:,:,1] * matrix_rgb[1][1] + arr_img[:,:,2] * matrix_rgb[1][2]
         img_copy[:,:,2] = arr_img[:,:,2] * matrix_rgb[2][0] + arr_img[:,:,1] * matrix_rgb[2][1] + arr_img[:,:,2] * matrix_rgb[2][2]
         """
-        img_copy = np.dot(arr_img, matrix_rgb.copy())
+        img_copy = np.dot(arr_img, matrix_rgb.T.copy())
         
         
         # setting RGB limits
@@ -87,11 +89,16 @@ class Converter:
         # Return Image, Image_Array
         return img_transformed, img_copy
     
-    def RGB_2_YIQ_2_RGB(self, image_path):
+    def RGB_2_YIQ_2_RGB(self, image_path = None, image_obj = None):
         
         # Open Image and transform into a numpy array
-        image = Image.open(image_path)
-        self.image = Image.open(image_path)
+        if image_path != None:
+            # Open Image and transform into a numpy array
+            image = Image.open(image_path)
+            self.image = Image.open(image_path)
+        elif image_obj != None:
+            image = image_obj.copy()
+
         arr_img = np.asarray(image)
         
         # Makes a copy of the original image numpy array
@@ -116,7 +123,7 @@ class Converter:
         self.image_transformed = Image.fromarray(img_copy.astype('uint8'))
         
         # Save Image
-        img_transformed.save('yiq.png')
+        #img_transformed.save('yiq.png')
         
         # Matrix RGB
         matrix_rgb = np.array([[1.0, 0.956, 0.621],
@@ -137,7 +144,7 @@ class Converter:
         # Transform numpy array to Image
         img_transformed = Image.fromarray(img_copy2.astype('uint8'))
         #Save Image
-        img_transformed.save('rgb.png')
+        #img_transformed.save('rgb.png')
         
         return img_transformed
         
