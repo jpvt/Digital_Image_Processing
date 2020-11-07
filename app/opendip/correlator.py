@@ -15,38 +15,42 @@ class Correlator:
 
         return padded_image
         
-        
-    def apply_correlation(self, image_path, filter_matrix, zero_padding = True):
+    def apply_correlation(self, image_path, filter_matrix, zero_padding = True, normalization = False):
         self.image = np.asarray(Image.open(image_path).convert('RGB'))
         self.filter = filter_matrix
+
+        epsilon = 1e-7
         
         horizontal_padding = self.filter.shape[0]//2
         vertical_padding = self.filter.shape[1]//2
-        output = np.zeros((self.image.shape[0], self.image.shape[1], 3))
-        
 
-        print(f"{horizontal_padding} and {vertical_padding}")
         if zero_padding:
-            self.image  = self.__padding(horizontal_padding, vertical_padding)
+            preprocessed_img = self.__padding(horizontal_padding, vertical_padding)
+            output = np.zeros((self.image.shape[0], self.image.shape[1], 3))
+        else:
+            preprocessed_img = self.image
+            output = np.zeros((self.image.shape[0] - 2 * vertical_padding, self.image.shape[1] - 2 * horizontal_padding, 3))
+
+        if not normalization:
+            for i in range(preprocessed_img.shape[0] - self.filter.shape[0]):
+                for j in range(preprocessed_img.shape[1] - self.filter.shape[1]):
+                    for k in range(3):
+                        output[i,j,k] = np.sum(np.multiply(self.filter, preprocessed_img[i: i + self.filter.shape[0], j: j + self.filter.shape[1], k]))
+        else:
+            filter_diff = self.filter - np.mean(self.filter)
+            normalized_filter = filter_diff/np.sum(np.abs(filter_diff + epsilon))
+            if np.argmax(normalized_filter) == 0:
+                print("Warning : Filter has mean zero. Normalization will result in a black image.")
+
+            for i in range(preprocessed_img.shape[0] - self.filter.shape[0]):
+                for j in range(preprocessed_img.shape[1] - self.filter.shape[1]):
+                    for k in range(3):
+                        window = preprocessed_img[i: i + self.filter.shape[0], j: j + self.filter.shape[1], k]
+                        window_diff = window - np.mean(window)
+                        output[i,j,k] = np.sum(np.multiply((window_diff)/np.sum(np.abs(window_diff + epsilon)), normalized_filter))
             
-        for i in range(self.image.shape[0] - self.filter.shape[0]):
-            for j in range(self.image.shape[1] - self.filter.shape[1]):
-                for k in range(3):
-#                     print(i , j , k)
-#                     print(i + self.filter.shape[0], j + self.filter.shape[1])
-                    output[i,j,k] = np.sum(np.multiply(self.filter, self.image[i: i + self.filter.shape[0], j: j + self.filter.shape[1], k]))
-            
-        return self.image, output
+        return self.image, preprocessed_img, output
     
-    def apply_norm_correlation(self, image_path, filter_matrix, zero_padding = True):
-        self.image = np.asarray(Image.open(image_path).convert('RGB'))
-        self.filter = filter_matrix
-
-        if zero_padding:
-            padded_image = self.__padding()
-                    
-        return self.image, padded_image
-
 c = Correlator()
 
 filter_matrix = np.ones((9, 9), np.float32)/81
