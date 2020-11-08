@@ -64,12 +64,12 @@ class Correlator:
         
         return self.image, preprocessed_img, output
     
-    def apply_sobel_filter(self, image_path, zero_padding=True, normalization=False, mode="horizontal"):
-        if mode == "horizontal":
+    def apply_sobel_filter(self, image_path, zero_padding=True, normalization=False, mode="vertical"):
+        if mode == "vertical":
             sobel_filter = np.array([[-1,0,1],
                         [-2,0,2],
                         [-1,0,1]])
-        elif mode == "vertical":
+        elif mode == "horizontal":
             sobel_filter = np.array([[-1,0,1],
                         [-2,0,2],
                         [-1,0,1]]).T
@@ -78,4 +78,6 @@ class Correlator:
             return -1
         
         return self.apply_correlation(image_path, sobel_filter, zero_padding=zero_padding, normalization=normalization)
-        
+    
+    def apply_box_filter(self, image_path, zero_padding=True, normalization=False):
+        return self.apply_correlation(image_path, np.ones((3,3))/9, zero_padding, normalization)
