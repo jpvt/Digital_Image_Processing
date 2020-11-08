@@ -58,5 +58,24 @@ class Correlator:
                         window = preprocessed_img[i: i + self.filter.shape[0], j: j + self.filter.shape[1], k]
                         window_diff = window - np.mean(window)
                         output[i,j,k] = np.sum(np.multiply((window_diff)/np.sum(np.abs(window_diff + epsilon)), normalized_filter))
-            
+        
+        output[output < 0] = 0
+        output[output > 255] = 255
+        
         return self.image, preprocessed_img, output
+    
+    def apply_sobel_filter(self, image_path, zero_padding=True, normalization=False, mode="horizontal"):
+        if mode == "horizontal":
+            sobel_filter = np.array([[-1,0,1],
+                        [-2,0,2],
+                        [-1,0,1]])
+        elif mode == "vertical":
+            sobel_filter = np.array([[-1,0,1],
+                        [-2,0,2],
+                        [-1,0,1]]).T
+        else:
+            print("Choose either vertical or Horizontal")
+            return -1
+        
+        return self.apply_correlation(image_path, sobel_filter, zero_padding=zero_padding, normalization=normalization)
+        
