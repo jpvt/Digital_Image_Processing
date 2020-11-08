@@ -11,8 +11,6 @@ class Correlator:
 
     def __padding(self, horizontal_padding, vertical_padding):
         padded_image = np.zeros((self.image.shape[0] + 2 * vertical_padding, self.image.shape[1] + 2 * horizontal_padding, 3))
-        print("image shape = ",self.image.shape)
-        print("padded image shape = ",padded_image.shape)
         
         if vertical_padding == 0:
             padded_image[:, horizontal_padding : -horizontal_padding, :] = self.image 
@@ -43,7 +41,6 @@ class Correlator:
             preprocessed_img = self.image
             output = np.zeros((self.image.shape[0] - 2 * vertical_padding, self.image.shape[1] - 2 * horizontal_padding, 3))
     
-        print(output.shape)
         if not normalization:
             for i in range(preprocessed_img.shape[0] - self.filter.shape[0]):
                 for j in range(preprocessed_img.shape[1] - self.filter.shape[1]):
@@ -63,16 +60,3 @@ class Correlator:
                         output[i,j,k] = np.sum(np.multiply((window_diff)/np.sum(np.abs(window_diff + epsilon)), normalized_filter))
             
         return self.image, preprocessed_img, output
-    
-c = Correlator()
-
-filter_matrix = np.ones((9, 9), np.float32)/81
-
-image, padded_image = c.apply_correlation("../assets/Imagens_teste/2817540617.jpg", filter_matrix, zero_padding=True)
-
-print(image.shape)
-print(padded_image.shape)
-image = Image.fromarray(image.astype('uint8'))
-image.show()
-plt.imshow(padded_image.astype(int))
-plt.show()
