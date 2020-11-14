@@ -1,4 +1,5 @@
 from opendip.converter import Converter
+from opendip.filter import Filter
 from io import BytesIO
 import base64
 import streamlit as st
@@ -9,16 +10,16 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
 
-def get_image_download_link(img):
-	"""Generates a link allowing the PIL image to be downloaded
-	in:  PIL image
-	out: href string
-	"""
-	buffered = BytesIO()
-	img.save(buffered, format="JPEG")
-	img_str = base64.b64encode(buffered.getvalue()).decode()
-	href = f'       <a href="data:file/jpg;base64,{img_str}">Baixe a imagem escolhida</a>  '
-	return href
+# def get_image_download_link(img):
+# 	"""Generates a link allowing the PIL image to be downloaded
+# 	in:  PIL image
+# 	out: href string
+# 	"""
+# 	buffered = BytesIO()
+# 	img.save(buffered, format="JPEG")
+# 	img_str = base64.b64encode(buffered.getvalue()).decode()
+# 	href = f'       <a href="data:file/jpg;base64,{img_str}">Baixe a imagem escolhida</a>  '
+# 	return href
 
 st.title("OpenDIP - Dashboard de Demonstração")
 
@@ -99,13 +100,13 @@ elif select == "Conversor RGB-YIQ-RGB":
             converter.visualize_image(yiq_image, capt='Imagem YIQ')
 
 
-            st.markdown(get_image_download_link(yiq_image), unsafe_allow_html=True)
+            # st.markdown(get_image_download_link(yiq_image), unsafe_allow_html=True)
 
         elif conversion_selectbox == "Imagem RGB convertida a partir da imagem YIQ":
 
             converter.visualize_image(rgb_image, capt='Imagem RGB convertida a partir da imagem YIQ')
 
-            st.markdown(get_image_download_link(rgb_image), unsafe_allow_html=True)
+            # st.markdown(get_image_download_link(rgb_image), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre como fizemos essa conversão para você'):
             st.markdown("""
@@ -113,33 +114,46 @@ elif select == "Conversor RGB-YIQ-RGB":
                         """)
 
 elif select == "Aplicação de Filtros":
-
+    
     st.header("Aplicação de Filtros")
-
+    redPixel = True
+    greenPixel = True
+    bluePixel = True
     left_column, right_column = st.beta_columns(2)
 
     with left_column:
         uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja aplicar um filtro", type= ['png', 'jpg'] )
     with right_column:
         select_filter = st.selectbox('Selecione o filtro que deseja aplicar', ["Negativo","Sobel", "Média", "Mediana"])
-        select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
-        select_norm = st.checkbox('Aperte caso deseja utilizar correlação normalizada')
-
+        if select_filter != 'Negativo':
+            select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
+            select_norm = st.checkbox('Aperte caso deseja utilizar correlação normalizada')
+        else: 
+            redPixel = st.checkbox('Negativo na banda R')
+            greenPixel = st.checkbox('Negativo na banda G')
+            bluePixel = st.checkbox('Negativo na banda B')
     if uploaded_file is not None:
 
         orig_image = Image.open(uploaded_file)
-
+        print(orig_image)
+        tranf_image = orig_image
+        if select_filter == "Negativo":
+            
+            filter = Filter()
+            tranf_image = filter.apply_negative_filter(image_path= orig_image,R = redPixel,G=greenPixel,B=bluePixel)
+             
         with left_column:
             st.text("")
             st.subheader("Imagem Original")
             st.image(orig_image, use_column_width=True)
 
         with right_column:
-            st.subheader("Imagem Original")
-            st.image(orig_image, use_column_width=True)
+            st.subheader("Imagem transformada")
+            st.image(tranf_image, use_column_width=True)
 
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
             st.markdown("""
                         ## Explicação massa demais!
                         """)
+   
