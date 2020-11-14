@@ -158,6 +158,6 @@ class Converter:
         
         st.image(image, caption=capt, use_column_width=True)
     
-    def visualize_all_process(self, original_img, yiq_image, yiq2rgb_img, capt = 'Transformation'):
+    def visualize_all_process(self, original_img, yiq_image, yiq2rgb_img, capt = ['1','2','3']):
 
         st.image([original_img, yiq_image, yiq2rgb_img], caption=capt, width=219)
