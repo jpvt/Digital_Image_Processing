@@ -10,7 +10,7 @@ class Converter:
         
     def RGB_2_YIQ(self, image_path = None, image_obj = None):
         """
-        Y: 0.999 * R + 0.587 * G + 0.114 * B
+        Y: 0.299 * R + 0.587 * G + 0.114 * B
         I: 0.596 * R -  0.274 * G - 0.322 * B
         Q: 0.211 * R - 0.523 * G + 0.312 * B
         """
@@ -158,6 +158,6 @@ class Converter:
         
         st.image(image, caption=capt, use_column_width=True)
     
-    def visualize_all_process(self, original_img, yiq_image, yiq2rgb_img, capt = 'Transformation'):
+    def visualize_all_process(self, original_img, yiq_image, yiq2rgb_img, capt = ['1','2','3']):
 
         st.image([original_img, yiq_image, yiq2rgb_img], caption=capt, width=219)
