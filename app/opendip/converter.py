@@ -17,8 +17,8 @@ class Converter:
         
         if image_path != None:
             # Open Image and transform into a numpy array
-            image = Image.open(image_path)
-            self.image = Image.open(image_path)
+            image = Image.open(image_path).convert("RGB")
+            self.image = Image.open(image_path).convert("RGB")
         elif image_obj != None:
 
             image = image_obj.copy()
@@ -95,8 +95,8 @@ class Converter:
         # Open Image and transform into a numpy array
         if image_path != None:
             # Open Image and transform into a numpy array
-            image = Image.open(image_path)
-            self.image = Image.open(image_path)
+            image = Image.open(image_path).convert("RGB")
+            self.image = Image.open(image_path).convert("RGB")
         elif image_obj != None:
             image = image_obj.copy()
 

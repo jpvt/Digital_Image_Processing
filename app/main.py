@@ -131,14 +131,14 @@ elif select == "Aplicação de Filtros":
 
     with right_column:
 
-        select_filter = st.selectbox('Selecione o filtro que deseja aplicar', ["Negativo","Sobel", "Média", "Mediana"])
+        select_filter = st.selectbox('Selecione o filtro que deseja aplicar', ["Negativo RGB", "Negativo Y","Sobel", "Média", "Mediana"])
 
         if select_filter == 'Sobel':
 
             select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
             mode_filter = st.selectbox("Selecione o modo do filtro", ["horizontal","vertical"])
 
-        elif select_filter == "Negativo" : 
+        elif select_filter == "Negativo RGB" : 
 
             redPixel = st.checkbox('Negativo na banda R')
             greenPixel = st.checkbox('Negativo na banda G')
@@ -148,10 +148,15 @@ elif select == "Aplicação de Filtros":
 
         orig_image = Image.open(uploaded_file)
 
-        if select_filter == "Negativo":
+        if select_filter == "Negativo RGB":
             
             filter = Filter()
             tranf_image = filter.apply_negative_filter(image_path=uploaded_file, R=redPixel, G=greenPixel, B=bluePixel)
+
+        if select_filter == "Negativo Y":
+
+            filter = Filter()
+            tranf_image = filter.apply_negative_filter_in_y(image_path=uploaded_file)
 
         if select_filter == "Sobel":
 

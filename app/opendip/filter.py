@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 import streamlit as st
 from PIL import ImageFilter
+from .converter import Converter
 
 class Filter:
     def __init__(self):
@@ -24,6 +25,21 @@ class Filter:
 
         transf_image = Image.fromarray(image.astype('uint8'))
         return transf_image
+
+    def apply_negative_filter_in_y(self, image_path):
+        #image = np.array(Image.open(image_path).convert('RGB'))
+
+        converter = Converter()
+
+        yiq_img, yiq_arr = converter.RGB_2_YIQ(image_path=image_path)
+
+        yiq_arr[:,:,0] = 255 - yiq_arr[:,:,0]
+
+        rgb_img, rgb_arr =  converter.YIQ_2_RGB(arr_img=yiq_arr)
+
+        return rgb_img
+
+
 
     def visualize_image(self, image, capt = 'Image'):
         
