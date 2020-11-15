@@ -148,7 +148,7 @@ elif select == "Aplicação de Filtros":
             filter = Filter()
             tranf_image = filter.apply_negative_filter(image_path= orig_image,R = redPixel,G=greenPixel,B=bluePixel)
         if select_filter == "Sobel":
-            tranf_image = correlator.apply_sobel_filter(image_path = orig_image, mode = mode_filter)
+            tranf_image = correlator.apply_sobel_filter(image_path = orig_image, mode = mode_filter,zero_padding=select_padding)
         with left_column:
             st.text("")
             st.subheader("Imagem Original")
@@ -156,7 +156,7 @@ elif select == "Aplicação de Filtros":
 
         with right_column:
             st.subheader("Imagem transformada")
-            st.image(tranf_image, use_column_width=True,clamp=True)
+            st.image(tranf_image,clamp=True)
 
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
