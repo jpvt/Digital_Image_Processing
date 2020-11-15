@@ -126,14 +126,20 @@ elif select == "Aplicação de Filtros":
     left_column, right_column = st.beta_columns(2)
 
     with left_column:
+
         uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja aplicar um filtro", type= ['png', 'jpg'] )
+
     with right_column:
+
         select_filter = st.selectbox('Selecione o filtro que deseja aplicar', ["Negativo","Sobel", "Média", "Mediana"])
+
         if select_filter == 'Sobel':
+
             select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
-            select_norm = st.checkbox('Aperte caso deseja utilizar correlação normalizada') #aqui n
             mode_filter = st.selectbox("Selecione o modo do filtro", ["horizontal","vertical"])
+
         elif select_filter == "Negativo" : 
+
             redPixel = st.checkbox('Negativo na banda R')
             greenPixel = st.checkbox('Negativo na banda G')
             bluePixel = st.checkbox('Negativo na banda B')
@@ -141,22 +147,25 @@ elif select == "Aplicação de Filtros":
     if uploaded_file is not None:
 
         orig_image = Image.open(uploaded_file)
-        print(orig_image)
-        tranf_image = orig_image
+
         if select_filter == "Negativo":
             
             filter = Filter()
-            tranf_image = filter.apply_negative_filter(image_path=orig_image, R=redPixel, G=greenPixel, B=bluePixel)
-        if select_filter == "Sobel":
-            tranf_image = correlator.apply_sobel_filter(image_path=orig_image, mode=mode_filter, zero_padding=select_padding)
-        with left_column:
-            st.text("")
-            st.subheader("Imagem Original")
-            st.image(orig_image, use_column_width=True)
+            tranf_image = filter.apply_negative_filter(image_path=uploaded_file, R=redPixel, G=greenPixel, B=bluePixel)
 
-        with right_column:
-            st.subheader("Imagem transformada")
-            st.image(tranf_image,clamp=True, use_column_width=True)
+        if select_filter == "Sobel":
+
+            _ , _, transf_arr = correlator.apply_sobel_filter(image_path=uploaded_file, mode=mode_filter, zero_padding=select_padding)
+            tranf_image = Image.fromarray(transf_arr.astype('uint8'))
+
+
+        l, r = st.beta_columns(2)
+
+        l.subheader("Imagem Original")
+        l.image(orig_image, use_column_width=True)
+
+        r.subheader("Imagem Transformada")
+        r.image(tranf_image, use_column_width=True)
 
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
