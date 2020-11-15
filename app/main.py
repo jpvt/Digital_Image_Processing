@@ -1,5 +1,6 @@
 from opendip.converter import Converter
 from opendip.filter import Filter
+from opendip.correlator import Correlator
 from io import BytesIO
 import base64
 import streamlit as st
@@ -28,6 +29,7 @@ st.title("OpenDIP - Dashboard de Demonstração")
 
 st.sidebar.title("Configurações")
 select = st.sidebar.selectbox('Escolha a opção que deseja visualizar', ["Introdução","Conversor RGB-YIQ-RGB", "Aplicação de Filtros"])
+
 
 
 
@@ -116,6 +118,8 @@ elif select == "Conversor RGB-YIQ-RGB":
 elif select == "Aplicação de Filtros":
     
     st.header("Aplicação de Filtros")
+    correlator = Correlator()
+    mode_filter = "horizontal"
     redPixel = True
     greenPixel = True
     bluePixel = True
@@ -125,13 +129,15 @@ elif select == "Aplicação de Filtros":
         uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja aplicar um filtro", type= ['png', 'jpg'] )
     with right_column:
         select_filter = st.selectbox('Selecione o filtro que deseja aplicar', ["Negativo","Sobel", "Média", "Mediana"])
-        if select_filter != 'Negativo':
+        if select_filter == 'Sobel':
             select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
             select_norm = st.checkbox('Aperte caso deseja utilizar correlação normalizada')
-        else: 
+            mode_filter = st.selectbox("Selecione o modo do filtro", ["horizontal","vertical"])
+        elif select_filter == "Negativo" : 
             redPixel = st.checkbox('Negativo na banda R')
             greenPixel = st.checkbox('Negativo na banda G')
             bluePixel = st.checkbox('Negativo na banda B')
+
     if uploaded_file is not None:
 
         orig_image = Image.open(uploaded_file)
@@ -141,7 +147,8 @@ elif select == "Aplicação de Filtros":
             
             filter = Filter()
             tranf_image = filter.apply_negative_filter(image_path= orig_image,R = redPixel,G=greenPixel,B=bluePixel)
-             
+        if select_filter == "Sobel":
+            tranf_image = correlator.apply_sobel_filter(image_path = orig_image, mode = mode_filter)
         with left_column:
             st.text("")
             st.subheader("Imagem Original")
@@ -149,7 +156,7 @@ elif select == "Aplicação de Filtros":
 
         with right_column:
             st.subheader("Imagem transformada")
-            st.image(tranf_image, use_column_width=True)
+            st.image(tranf_image, use_column_width=True,clamp=True)
 
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):

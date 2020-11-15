@@ -10,8 +10,8 @@ class Correlator:
         self.filter = None
 
     def __padding(self, horizontal_padding, vertical_padding):
-        padded_image = np.zeros((self.image.shape[0] + 2 * vertical_padding, self.image.shape[1] + 2 * horizontal_padding, 3))
-        
+        padded_image = np.zeros((self.image.size[0] + 2 * vertical_padding, self.image.size[1] + 2 * horizontal_padding, 3))
+
         if vertical_padding == 0:
             padded_image[:, horizontal_padding : -horizontal_padding, :] = self.image 
         elif horizontal_padding == 0:
@@ -21,10 +21,15 @@ class Correlator:
     
         return padded_image
         
-    def apply_correlation(self, image_path, filter_matrix, zero_padding = True):
-        self.image = np.array(Image.open(image_path).convert('RGB'))
+    def apply_correlation(self, image_path, filter_matrix, zero_padding = False):
+        # self.image = np.array(Image.open(image_path).convert('RGB'))
+        self.image = image_path.copy();
+        self.image = np.array(self.image);
         self.filter = filter_matrix
-        
+  
+        num_rows =np.shape(self.image)[0]
+        num_cols = np.shape(self.image)[1]
+  
         vertical_padding = self.filter.shape[0]//2
         horizontal_padding = self.filter.shape[1]//2
         
@@ -34,10 +39,10 @@ class Correlator:
         
         if zero_padding:
             preprocessed_img = self.__padding(horizontal_padding, vertical_padding)
-            output = np.zeros((self.image.shape[0], self.image.shape[1], 3))
+            output = np.zeros((num_rows, num_cols, 3))
         else:
             preprocessed_img = self.image
-            output = np.zeros((self.image.shape[0] - 2 * vertical_padding, self.image.shape[1] - 2 * horizontal_padding, 3))
+            output = np.zeros((num_rows - 2 * vertical_padding, num_cols - 2 * horizontal_padding, 3))
     
         for i in range(preprocessed_img.shape[0] - self.filter.shape[0]):
             for j in range(preprocessed_img.shape[1] - self.filter.shape[1]):
@@ -47,10 +52,11 @@ class Correlator:
         output[output < 0] = 0
         output[output > 255] = 255
         
-        return self.image, preprocessed_img, output
+        return  output
     
     def apply_norm_correlation(self, image_path, filter_matrix, zero_padding = True):
-        self.image = np.array(Image.open(image_path).convert('RGB'))
+        # self.image = np.array(Image.open(image_path).convert('RGB'))
+        self.image = image_path.copy()
         self.filter = filter_matrix
 
         epsilon = 1e-7
@@ -88,7 +94,7 @@ class Correlator:
         
         return self.image, preprocessed_img, output
 
-    def apply_sobel_filter(self, image_path, zero_padding=True, mode="vertical"):
+    def apply_sobel_filter(self, image_path, zero_padding=False, mode="vertical"):
         if mode == "vertical":
             sobel_filter = np.array([[-1,0,1],
                         [-2,0,2],
