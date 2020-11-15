@@ -131,7 +131,7 @@ elif select == "Aplicação de Filtros":
         select_filter = st.selectbox('Selecione o filtro que deseja aplicar', ["Negativo","Sobel", "Média", "Mediana"])
         if select_filter == 'Sobel':
             select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
-            select_norm = st.checkbox('Aperte caso deseja utilizar correlação normalizada')
+            select_norm = st.checkbox('Aperte caso deseja utilizar correlação normalizada') #aqui n
             mode_filter = st.selectbox("Selecione o modo do filtro", ["horizontal","vertical"])
         elif select_filter == "Negativo" : 
             redPixel = st.checkbox('Negativo na banda R')
@@ -146,9 +146,9 @@ elif select == "Aplicação de Filtros":
         if select_filter == "Negativo":
             
             filter = Filter()
-            tranf_image = filter.apply_negative_filter(image_path= orig_image,R = redPixel,G=greenPixel,B=bluePixel)
+            tranf_image = filter.apply_negative_filter(image_path=orig_image, R=redPixel, G=greenPixel, B=bluePixel)
         if select_filter == "Sobel":
-            tranf_image = correlator.apply_sobel_filter(image_path = orig_image, mode = mode_filter,zero_padding=select_padding)
+            tranf_image = correlator.apply_sobel_filter(image_path=orig_image, mode=mode_filter, zero_padding=select_padding)
         with left_column:
             st.text("")
             st.subheader("Imagem Original")
@@ -156,7 +156,7 @@ elif select == "Aplicação de Filtros":
 
         with right_column:
             st.subheader("Imagem transformada")
-            st.image(tranf_image,clamp=True)
+            st.image(tranf_image,clamp=True, use_column_width=True)
 
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
