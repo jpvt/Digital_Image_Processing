@@ -11,17 +11,16 @@ st.set_option('deprecation.showfileUploaderEncoding', False)
 
 
 
-
-# def get_image_download_link(img):
-# 	"""Generates a link allowing the PIL image to be downloaded
-# 	in:  PIL image
-# 	out: href string
-# 	"""
-# 	buffered = BytesIO()
-# 	img.save(buffered, format="JPEG")
-# 	img_str = base64.b64encode(buffered.getvalue()).decode()
-# 	href = f'       <a href="data:file/jpg;base64,{img_str}">Baixe a imagem escolhida</a>  '
-# 	return href
+def get_image_download_link(img, capt):
+    """Generates a link allowing the PIL image to be downloaded
+    in:  PIL image
+    out: href string
+    """
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    href = f'       <a href="data:file/jpg;base64,{img_str}">{capt}</a>  '
+    return href
 
 st.title("OpenDIP - Dashboard de Demonstração")
 
@@ -119,13 +118,13 @@ elif select == "Conversor RGB-YIQ-RGB":
             converter.visualize_image(yiq_image, capt='Imagem YIQ')
 
 
-            # st.markdown(get_image_download_link(yiq_image), unsafe_allow_html=True)
+            st.markdown(get_image_download_link(yiq_image, 'Clique aqui para baixar a imagem YIQ'), unsafe_allow_html=True)
 
         elif conversion_selectbox == "Imagem RGB convertida a partir da imagem YIQ":
 
             converter.visualize_image(rgb_image, capt='Imagem RGB convertida a partir da imagem YIQ')
 
-            # st.markdown(get_image_download_link(rgb_image), unsafe_allow_html=True)
+            st.markdown(get_image_download_link(rgb_image, 'Clique aqui para baixar a imagem que foi transformada para RGB'), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre como fizemos essa conversão para você'):
             st.markdown("""
@@ -207,6 +206,8 @@ elif select == "Aplicação de Filtros":
         r.subheader("Imagem Transformada")
         r.image(tranf_image, use_column_width=True)
 
+        r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
+
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
             st.markdown("""
@@ -237,16 +238,18 @@ elif select == "Correlação Normalizada":
         filter_matrix = np.array(Image.open(uploaded_filter).convert('RGB'))
         right_column.image(filter_matrix, use_column_width=True)
 
-        orig_image, tranf_image = correlator.apply_norm_correlation(uploaded_file, filter_matrix)
+        if st.button('Clique para Executar'):
+            orig_image, tranf_image = correlator.apply_norm_correlation(uploaded_file, filter_matrix)
 
-        l, r = st.beta_columns(2)
+            l, r = st.beta_columns(2)
 
-        l.subheader("Imagem Original")
-        l.image(orig_image, use_column_width=True)
+            l.subheader("Imagem Original")
+            l.image(orig_image, use_column_width=True)
 
-        r.subheader("Imagem Transformada")
-        r.image(tranf_image, use_column_width=True)
+            r.subheader("Imagem Transformada")
+            r.image(tranf_image, use_column_width=True)
 
+            r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
             st.markdown("""
