@@ -8,7 +8,7 @@ import streamlit as st
 from PIL import Image
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
-
+ 
 
 
 def get_image_download_link(img, capt):
