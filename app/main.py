@@ -3,6 +3,7 @@ from opendip.filter import Filter
 from opendip.correlator import Correlator
 from io import BytesIO
 import base64
+import numpy as np
 import streamlit as st
 from PIL import Image
 st.set_option('deprecation.showfileUploaderEncoding', False)
@@ -28,7 +29,7 @@ st.title("OpenDIP - Dashboard de Demonstração")
 
 
 st.sidebar.title("Configurações")
-select = st.sidebar.selectbox('Escolha a opção que deseja visualizar', ["Introdução","Conversor RGB-YIQ-RGB", "Aplicação de Filtros"])
+select = st.sidebar.selectbox('Escolha a opção que deseja visualizar', ["Introdução","Conversor RGB-YIQ-RGB", "Aplicação de Filtros", "Correlação Normalizada"])
 
 
 
@@ -197,6 +198,43 @@ elif select == "Aplicação de Filtros":
             img, preprocessed, output = filter.apply_median_filter(image_path=uploaded_file, filter_shape=(vertical, horizontal), zero_padding=select_padding)
             tranf_image = Image.fromarray(output.astype('uint8'))
 
+
+        l, r = st.beta_columns(2)
+
+        l.subheader("Imagem Original")
+        l.image(orig_image, use_column_width=True)
+
+        r.subheader("Imagem Transformada")
+        r.image(tranf_image, use_column_width=True)
+
+
+        if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
+            st.markdown("""
+                        ## Explicação massa demais!
+                        """)
+
+elif select == "Correlação Normalizada":
+    st.header("Correlação Normalizada")
+    correlator = Correlator()
+    left_column, right_column = st.beta_columns(2)
+
+    with left_column:
+
+        uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja aplicar um filtro", type= ['png', 'jpg'] )
+        orig_image = np.array(Image.open(uploaded_file).convert('RGB'))
+        left_column.image(orig_image, use_column_width=True)
+        
+    with right_column:
+        
+        uploaded_filter = st.file_uploader("Escolha um filtro RGB que deseja aplicar na imagem", type= ['png', 'jpg'] )
+        filter_matrix = np.array(Image.open(uploaded_filter).convert('RGB'))
+        right_column.image(filter_matrix, use_column_width=True)
+
+    select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
+
+    if uploaded_file is not None and uploaded_filter is not None:
+
+        orig_image, tranf_image = correlator.apply_norm_correlation(uploaded_file, filter_matrix)
 
         l, r = st.beta_columns(2)
 
