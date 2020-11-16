@@ -221,18 +221,21 @@ elif select == "Correlação Normalizada":
     with left_column:
 
         uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja aplicar um filtro", type= ['png', 'jpg'] )
-        orig_image = np.array(Image.open(uploaded_file).convert('RGB'))
-        left_column.image(orig_image, use_column_width=True)
-        
+
+
     with right_column:
         
         uploaded_filter = st.file_uploader("Escolha um filtro RGB que deseja aplicar na imagem", type= ['png', 'jpg'] )
-        filter_matrix = np.array(Image.open(uploaded_filter).convert('RGB'))
-        right_column.image(filter_matrix, use_column_width=True)
+        
 
     select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
 
     if uploaded_file is not None and uploaded_filter is not None:
+        orig_image = np.array(Image.open(uploaded_file).convert('RGB'))
+        left_column.image(orig_image, use_column_width=True)
+
+        filter_matrix = np.array(Image.open(uploaded_filter).convert('RGB'))
+        right_column.image(filter_matrix, use_column_width=True)
 
         orig_image, tranf_image = correlator.apply_norm_correlation(uploaded_file, filter_matrix)
 
