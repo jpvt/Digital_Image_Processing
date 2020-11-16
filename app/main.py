@@ -393,7 +393,9 @@ elif select == "Correlação Normalizada":
             r.subheader("Imagem Transformada")
             r.image(tranf_image, use_column_width=True)
 
-            r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
+            transformed_image = Image.fromarray(tranf_image.astype('uint8'))
+
+            r.markdown(get_image_download_link(transformed_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
             st.markdown("""
