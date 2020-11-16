@@ -312,9 +312,50 @@ elif select == "Aplicação de Filtros":
         r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
 
 
-        if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
-            st.markdown("""
-                        ## Explicação massa demais!
+        if st.checkbox('Explicação sobre os filtros acima'):
+            st.markdown(r"""
+                        ## Negativo RGB
+                        Nesta etapa, fizemos o negativo da imagem de acordo com os canais escolhidos. Essa tarefa consistiu em pegar o complemento da imagem (no canal especificado) para 255.
+
+                        ## Negativo Y
+                        Nesta opção, é feito o mesmo procedimento descrito no Negativo RGB, mas com uma prévia conversão ao sistema YIQ e aplicação do negativo apenas no canal Y.
+
+                        ## Sobel
+                        No filtro de sobel é aplicada uma máscara (horizontal ou vertical) 3X3 que é responsável pro identificar bordas na imagem (contrastes).
+
+                        As máscaras são as seguintes:
+                        
+                        * Vertical
+                        $$
+                            \begin{bmatrix}
+                            -1 & 0 & 1 \\[0.3em]  
+                            -2 & 0 & 2 \\[0.3em]  
+                            -1 & 0 & 1
+                            \end{bmatrix}
+                        $$
+
+                        * Horizontal
+                        $$
+                            \begin{bmatrix}
+                            -1 & -2 & -1 \\[0.3em]  
+                            0 & 0 & 0 \\[0.3em]  
+                            1 & 2 & 1
+                            \end{bmatrix}
+                        $$
+
+                        ## Média
+                        A aplicação do filtro média consiste em uma média dos pixels dentro da janela escolhida. Isto é, se escolhermos um filtro 3x3, daremos ao pixel central o valor da média dos 9 pixels que passaram pelo filtro.
+                        
+                        $$
+                            \begin{bmatrix}
+                            \frac{1}{9} & \frac{1}{9} & \frac{1}{9} \\[0.3em]  
+                            \frac{1}{9} & \frac{1}{9} & \frac{1}{9} \\[0.3em]  
+                            \frac{1}{9} & \frac{1}{9} & \frac{1}{9}
+                            \end{bmatrix}
+                        $$
+                        
+                        ## Mediana
+                        Por fim, o filtro mediana consiste em uma janela mxn que retorna o valor do pixel que está presente no meio da distribuição ordenada dos pixels.
                         """)
 
 elif select == "Correlação Normalizada":
