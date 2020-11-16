@@ -1,48 +1,33 @@
-# Digital_Image_Processing
+[![author](https://img.shields.io/badge/author-ItamarRocha-black.svg)](https://github.com/ItamarRocha)
+[![author](https://img.shields.io/badge/author-jpvt-purple.svg)](https://github.com/jpvt)  
+[![author](https://img.shields.io/badge/author-joallace-blue.svg)](https://github.com/joallace) 
+[![author](https://img.shields.io/badge/author-sheywesk-yellow.svg)](https://github.com/sheywesk)  
+[![](https://img.shields.io/badge/python-3.7+-cyan.svg)](https://www.python.org/downloads/release/python-365/)
 
-## API - OpenDIP
+# Introdução
 
+Nesta repositório demonstraremos a primeira versão do OpenDIP, uma biblioteca desenvolvida como trabalho prático para o curso Introdução ao Processamento Digital de Imagens durante o período 2020.1, ministrada pelo [Prof. Leonardo Vidal](http://lattes.cnpq.br/1047122596139990).
 
-1. Converter: Classe responsável pelas conversões disponíveis na API, para essa primeira versão ela terá os seguintes métodos: 1. RGB2YIQ; 2. YIQ2RGB; 3. visualize_image(só a imagem após conversão); 4. visualize_all_process(visualizar imagem antes e depois).
+Nessa primeira versão, apresentaremos três funcionalidades: Conversão de espaço, em que implementamos os conversores RGB-YIQ e YIQ-RGB; Correlação de Imagens, em que aplicamos filtros pontuais como Sobel, Negativo em RGB, Negativo em Y, Média e Mediana; Correlação Normalizada, que encontra o que é mais semelhante de uma imagem em outra.
 
-2. Filter: Classe responsável pelos filtros disponíveis na API, terá os seguintes métodos: 1. apply_sobel_filter; 2. apply_median_filter; 3. apply_box_linear_filter; 4. apply_negative; 4. visualize_image(só a imagem após conversão); 5. visualize_all_process(visualizar imagem antes e depois).
+A aplicação pode ser acessada em: [OpenDIP Demo](https://opendip.herokuapp.com)
 
-3. Correlator: Classe responsável por fazer correlação e convolução, terá os seguintes métodos: 1. apply_correlation; 2. apply_norm_correlation
+## Metodologia
 
+Para o desenvolvimento da biblioteca escolhemos a linguagem Python, devido à sua praticidade e bibliotecas como Numpy e Pillow, que respectivamente permitem trabalhar melhor com vetores e manipular a entrada e saída de imagens. Além disso, utilizamos a biblioteca Streamlit para realizar essa demonstração, a fim de documentar nosso trabalho de maneira clara e com uma linguagem bastante visual.
 
-## Especificação do trabalho
+## Como contribuir
 
+Caso tenha gostado da iniciativa e queira contribuir para com o desenvolvimento da biblioteca, após a finalização da disciplina iremos começar a aceitar pull requests no nosso [repositório no github](https://github.com/jpvt/Digital_Image_Processing).
 
-Desenvolva um sistema para abrir, exibir, manipular e salvar imagens RGB com 24 bits/pixel
-(8 bits/componente/pixel). O sistema deve ter a seguinte funcionalidade:
-1. Conversão RGB-YIQ-RGB (cuidado com os limites de R, G e B na volta!)
-2. Negativo
-3. Correlação m x n. Testar com filtros Média e Sobel
-4. Compare a aplicação do filtro média 25x25 com a aplicação do filtro média 25x1
-seguido pela aplicação do filtro média 1x25, em termos de tempo de processamento
-e resultado final
-5. Filtro mediana m x n
-6. Reproduza o exemplo em
-https://la.mathworks.com/help/images/ref/normxcorr2.html?lang=en com as
-imagens baboon.png e babooneye.png, mas aplicando a correlação normalizada
-banda a banda e tomando como resultado a média das três correlações em cada
-ponto. Você pode utilizar toda a funcionalidade da linguagem de programação de
-sua escolha, incluindo bibliotecas avançadas.
-7. Reproduza o item 6 utilizando a função correlação desenvolvida no item 3.
-O sistema deve ser desenvolvido em uma linguagem de programação de sua escolha. Não
-use bibliotecas ou funções especiais de processamento de imagens imagem baboon.png e
-babooneye.png, exceto no item 6, em que o uso de funções avançadas é livre. Para o item 2, duas
-formas de aplicação devem ser testadas: em RGB (banda a banda) e na banda Y, com
-posterior conversão para RGB.
-Observações:
-1. O trabalho pode ser feito em grupo, com até cinco componentes.
-2. Para integralização das notas, o trabalho deve ser apresentado na data e horário
-marcados, juntamente com um relatório, contendo pelo menos as seguintes
-seções: introdução (contextualização e apresentação do tema, fundamentação
-teórica, objetivos), materiais e métodos (descrição das atividades desenvolvidas e
-das ferramentas e conhecimentos utilizados) resultados, discussão (problemas e
-dificuldades encontradas, comentários críticos sobre os resultados) e conclusão.
-Cada componente do grupo deve estar familiarizado com o trabalho desenvolvido
-pelos demais componentes do seu grupo, e todos devem comparecer à
-apresentação dos trabalhos.
+## Clone
 
+- Clone esse repositório na sua máquina local utilizando:
+    > https://github.com/jpvt/Digital_Image_Processing.git
+
+## Autores
+
+|<a href="https://www.linkedin.com/in/jpvt/" target="_blank">**João Pedro Vasconcelos**</a> | <a href="https://linkedin.com/in/itamarrocha" target="_blank">**Itamar Filho**</a>      |<a href="https://www.linkedin.com/in/jo%C3%A3o-wallace-b821bb1b0/" target="_blank">**João Wallace Lucena**</a> | <a href="https://www.linkedin.com/in/sheywesk-medeiros/" target="_blank">**Sheywesk**</a>      |
+|:-----------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:| 
+|                   <img src="app/assets/authors/jp.png" width="200px"> </img>                            |               <img src="app/assets/authors/itamar.png" width="200px"> </img>                          |                   <img src="app/assets/authors/wallace.png" width="200px"> </img>                            |               <img src="app/assets/authors/sheywesk.png" width="200px"> </img>                          |
+|               <a href="http://github.com/jpvt" target="_blank">`github.com/jpvt`</a>      |  <a href="https://github.com/ItamarRocha" target="_blank">`github.com/ItamarRocha`</a>  |               <a href="http://github.com/joallace" target="_blank">`github.com/joallace`</a>      |  <a href="https://github.com/sheywesk" target="_blank">`github.com/sheywesk`</a>  |
