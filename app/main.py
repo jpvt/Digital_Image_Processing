@@ -159,6 +159,11 @@ elif select == "Aplicação de Filtros":
             redPixel = st.checkbox('Negativo na banda R')
             greenPixel = st.checkbox('Negativo na banda G')
             bluePixel = st.checkbox('Negativo na banda B')
+        
+        elif select_filter == "Média" or select_filter == "Mediana":
+            select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
+            vertical = st.number_input("Digite o tamanho vertical do box", min_value=1, step=1)
+            horizontal = st.number_input("Digite o tamanho horizontal do box", min_value=1, step = 1)
 
     if uploaded_file is not None:
 
@@ -179,6 +184,18 @@ elif select == "Aplicação de Filtros":
             _ , _, transf_arr = correlator.apply_sobel_filter(image_path=uploaded_file, mode=mode_filter, zero_padding=select_padding)
             tranf_image = Image.fromarray(transf_arr.astype('uint8'))
 
+        if select_filter == "Média":
+           
+            filter = Filter()
+            img, preprocessed, output = filter.apply_box_filter(image_path=uploaded_file, box_shape=(vertical, horizontal), zero_padding=select_padding)
+            tranf_image = Image.fromarray(output.astype('uint8'))
+
+        if select_filter == "Mediana":
+
+            filter = Filter()
+            img, preprocessed, output = filter.apply_median_filter(image_path=uploaded_file, filter_shape=(vertical, horizontal), zero_padding=select_padding)
+            tranf_image = Image.fromarray(output.astype('uint8'))
+
 
         l, r = st.beta_columns(2)
 
@@ -193,4 +210,3 @@ elif select == "Aplicação de Filtros":
             st.markdown("""
                         ## Explicação massa demais!
                         """)
-   
