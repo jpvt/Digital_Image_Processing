@@ -10,6 +10,7 @@ git push heroku branch:master
 
 gg
 
+heroku apps:rename opendip
 
 https://stackoverflow.com/questions/14593538/make-heroku-run-non-master-git-branch
 
