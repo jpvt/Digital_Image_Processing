@@ -180,8 +180,9 @@ elif select == "Aplicação de Filtros":
             tranf_image = filter.apply_negative_filter_in_y(image_path=uploaded_file)
 
         if select_filter == "Sobel":
-
-            _ , _, transf_arr = correlator.apply_sobel_filter(image_path=uploaded_file, mode=mode_filter, zero_padding=select_padding)
+            
+            filter = Filter()
+            _ , _, transf_arr = filter.apply_sobel_filter(image_path=uploaded_file, mode=mode_filter, zero_padding=select_padding)
             tranf_image = Image.fromarray(transf_arr.astype('uint8'))
 
         if select_filter == "Média":
