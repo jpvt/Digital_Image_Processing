@@ -130,7 +130,7 @@ elif select == "Conversor RGB-YIQ-RGB":
             st.markdown("""
                         ## O que é uma imagem digital?
 
-                        Uma imagem digital é composta de pixels, cada um com quantidades finitas e discretas de representação numérica para sua intensidade. A imagem digital contém um número fixo de linhas e colunas de pixels, normalmente armazenados na memória do computador como uma imagem raster, uma matriz bidimensional de pequenos inteiros, cada um representando uma cor associada a um pixel específico.
+                        Uma imagem digital é composta de pixels, cada um com quantidades finitas e discretas de representação numérica para sua intensidade. A imagem digital contém um número fixo de linhas e colunas de pixels, normalmente armazenados na memória do computador como uma imagem rasterizada, uma matriz bidimensional de pequenos inteiros, cada um representando uma cor associada a um pixel específico.
 
                         ## O que é o espaço RGB?
 
