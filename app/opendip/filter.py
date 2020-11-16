@@ -33,14 +33,15 @@ class Filter:
 
         yiq_img, yiq_arr = converter.RGB_2_YIQ(image_path=image_path)
 
-        yiq_arr[:,:,0] = 255 - yiq_arr[:,:,0]
+        yiq = yiq_arr.copy()
 
-        rgb_img, rgb_arr =  converter.YIQ_2_RGB(arr_img=yiq_arr)
+        yiq[:,:,0] = 255 - yiq[:,:,0]
 
-        return rgb_img
+        rgb_img, rgb_arr =  converter.YIQ_2_RGB(arr_img=yiq)
 
-
-
+        rgb = rgb_img.copy()
+        return rgb
+        
     def visualize_image(self, image, capt = 'Image'):
         
       st.image(image, caption=capt, use_column_width=True)

@@ -35,11 +35,11 @@ class Converter:
                       [0.211, -0.523, 0.312]])
         
         # Dot operation
-        """
-        img_copy[:,:,0] = arr_img[:,:,0] * matrix_yiq[0][0] + arr_img[:,:,1] * matrix_yiq[0][1] + arr_img[:,:,2] * matrix_yiq[0][2]
-        img_copy[:,:,1] = arr_img[:,:,1] * matrix_yiq[1][0] + arr_img[:,:,1] * matrix_yiq[1][1] + arr_img[:,:,2] * matrix_yiq[1][2]
-        img_copy[:,:,2] = arr_img[:,:,2] * matrix_yiq[2][0] + arr_img[:,:,1] * matrix_yiq[2][1] + arr_img[:,:,2] * matrix_yiq[2][2]
-        """
+        
+        #img_copy[:,:,0] = arr_img[:,:,0] * 0.299 + arr_img[:,:,1] * 0.587 + arr_img[:,:,2] * 0.114
+        #img_copy[:,:,1] = arr_img[:,:,0] * 0.596 + arr_img[:,:,1] * -0.274 + arr_img[:,:,2] * -0.322
+        #img_copy[:,:,2] = arr_img[:,:,0] * 0.211 + arr_img[:,:,1] * -0.523 + arr_img[:,:,2] * 0.312
+        
         img_copy = np.dot(arr_img, matrix_yiq.T.copy())
         
         # Transform numpy array to Image
@@ -67,18 +67,18 @@ class Converter:
                                [1.0, -1.106, 1.703]
                              ])
         # Dot Operation
-        """
-        img_copy[:,:,0] = arr_img[:,:,0] * matrix_rgb[0][0] + arr_img[:,:,1] * matrix_rgb[0][1] + arr_img[:,:,2] * matrix_rgb[0][2]
-        img_copy[:,:,1] = arr_img[:,:,1] * matrix_rgb[1][0] + arr_img[:,:,1] * matrix_rgb[1][1] + arr_img[:,:,2] * matrix_rgb[1][2]
-        img_copy[:,:,2] = arr_img[:,:,2] * matrix_rgb[2][0] + arr_img[:,:,1] * matrix_rgb[2][1] + arr_img[:,:,2] * matrix_rgb[2][2]
-        """
+        #img_copy = arr_img.copy()
+        #img_copy[:,:,0] = arr_img[:,:,0] * 1.0 + arr_img[:,:,1] * 0.956 + arr_img[:,:,2] * 0.621
+        #img_copy[:,:,1] = arr_img[:,:,0] * 1.0 + arr_img[:,:,1] * -0.272 + arr_img[:,:,2] * -0.647
+        #img_copy[:,:,2] = arr_img[:,:,0] * 1.0 + arr_img[:,:,1] * -1.106 + arr_img[:,:,2] * 1.703
+        
         img_copy = np.dot(arr_img, matrix_rgb.T.copy())
         
         
         # setting RGB limits
         np.where(img_copy < 0, img_copy, 0)
         np.where(img_copy > 255, img_copy, 255)
-        
+    
         
         # Transform numpy array to Image
         img_transformed = Image.fromarray(img_copy.astype('uint8'))
