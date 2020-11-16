@@ -127,7 +127,7 @@ elif select == "Conversor RGB-YIQ-RGB":
             st.markdown(get_image_download_link(rgb_image, 'Clique aqui para baixar a imagem que foi transformada para RGB'), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre como fizemos essa conversão para você'):
-            st.markdown("""
+            st.markdown(r"""
                         ## O que é uma imagem digital?
 
                         Uma imagem digital é composta de pixels, cada um com quantidades finitas e discretas de representação numérica para sua intensidade. A imagem digital contém um número fixo de linhas e colunas de pixels, normalmente armazenados na memória do computador como uma imagem rasterizada, uma matriz bidimensional de pequenos inteiros, cada um representando uma cor associada a um pixel específico.
