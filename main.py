@@ -8,7 +8,7 @@ import streamlit as st
 from PIL import Image
 st.set_option('deprecation.showfileUploaderEncoding', False)
 
- 
+
 
 
 def get_image_download_link(img, capt):
@@ -127,8 +127,111 @@ elif select == "Conversor RGB-YIQ-RGB":
             st.markdown(get_image_download_link(rgb_image, 'Clique aqui para baixar a imagem que foi transformada para RGB'), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre como fizemos essa conversão para você'):
-            st.markdown("""
-                        ## Explicação massa demais!
+            st.markdown(r"""
+                        ## O que é uma imagem digital?
+
+                        Uma imagem digital é composta de pixels, cada um com quantidades finitas e discretas de representação numérica para sua intensidade. A imagem digital contém um número fixo de linhas e colunas de pixels, normalmente armazenados na memória do computador como uma imagem rasterizada, uma matriz bidimensional de pequenos inteiros, cada um representando uma cor associada a um pixel específico.
+
+                        ## O que é o espaço RGB?
+
+                        O espaço RGB foi desenvolvido com propósito de reproduzir as cores em dispositivos eletrônicos como telas de monitores. Nesse cada pixel consiste em três canais, cada um representando uma cor (R para vermelho, G para verde e B para azul). Normalmente, 8 bits são reservados para cada componente (canal), o que se diferencia em 256 níveis de intensidade diferentes para cada cor, resultando em aproximadamente 16 milhões de cores reproduzidas no total.
+
+                        ## O que é o espaço YIQ?
+
+                        O espaço YIQ também é utilizado para reproduzir cores. O sistema YIQ é mais utilizado pelo sistema de TV em cores NTSC, adotado principalmente na América do Norte e Central e no Japão. I e Q representam a crominância e Y a luminância. O espaço utiliza uma combinação linear das diferenças entre os valores RGB. Podendo ser calculado da seguinte forma:
+
+                        $$
+                        R, G, B, Y  \in [0, 1], I  \in [-0.5957, 0.5957], Q \in [-0.5226, 0.5226]
+                        $$
+
+
+                        $$
+                        \begin{bmatrix}
+                        Y\\ 
+                        I\\ 
+                        Q
+                        \end{bmatrix} = \begin{bmatrix}
+
+                        0.299 & 0.587  & 0.114\\ 
+                        0.596 & -0.274 & -0.322\\ 
+                        0.211 & -0.523 & 0.312
+                        \end{bmatrix}
+
+                        \cdot
+
+                        \begin{bmatrix}
+                        R\\ 
+                        G\\ 
+                        B
+                        \end{bmatrix}
+                        $$
+
+                        Sendo assim, é possível representar o espaço RGB, como uma combinação linear entre os valores YIQ:
+
+                        $$
+                        \begin{bmatrix}
+                        R\\ 
+                        G\\ 
+                        B
+                        \end{bmatrix} = \begin{bmatrix}
+
+                        1.0 & 0.956  & 0.621\\ 
+                        1.0 & -0.272 & -0.647\\ 
+                        1.0 & -1.106 & 1.703
+                        \end{bmatrix}
+
+                        \cdot
+
+                        \begin{bmatrix}
+                        Y\\ 
+                        I\\ 
+                        Q
+                        \end{bmatrix}
+                        $$
+
+                        Logo, observa-se que com essas combinações é possível representar uma imagem RGB como YIQ e uma imagem YIQ como RGB. Então a partir disso podemos fazer os conversores RGB-YIQ e YIQ-RGB apenas calculando essas fórmulas. Veja o exemplo em código utilizando o pacote Numpy:
+
+                        * RGB - YIQ
+                        ```py
+
+                        # Matriz YIQ
+                        matrix_yiq = np.array([[0.299, 0.587, 0.114],
+                                            [0.596, -0.274, -0.322],
+                                            [0.211, -0.523, 0.312]
+                                            ])
+
+                        # Na Matriz YIQ é possível observar que os vetores não estão representados
+                        # como deveriam, visto que matematicamente cada vetor é representado pela
+                        # coluna e não pela linha. Portanto será necessário transpor a matriz.
+
+                        # arr_img == Array que representa a imagem
+
+                        yiq_image = np.dot(arr_img, matrix_yiq.T)
+
+                        # E simples assim temos nossa imagem YIQ
+
+                        ```
+
+                        * YIQ - RGB
+                        ```py
+                        # Matriz YIQ
+                        matrix_rgb = np.array([
+                                                [1.0, 0.956, 0.621],
+                                                [1.0, -0.272, -0.647],
+                                                [1.0, -1.106, 1.703]
+                                            ])
+
+                        # Na Matriz RGB é possível observar que os vetores não estão representados
+                        # como deveriam, visto que matematicamente cada vetor é representado pela
+                        # coluna e não pela linha. Portanto será necessário transpor a matriz.
+
+                        # arr_img == Array que representa a imagem
+
+                        rgb_image = np.dot(arr_img, matrix_yiq.T)
+
+                        # E simples assim temos nossa imagem RGB de volta
+                        ```
+
                         """)
 
 elif select == "Aplicação de Filtros":
@@ -209,9 +312,50 @@ elif select == "Aplicação de Filtros":
         r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
 
 
-        if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
-            st.markdown("""
-                        ## Explicação massa demais!
+        if st.checkbox('Explicação sobre os filtros acima'):
+            st.markdown(r"""
+                        ## Negativo RGB
+                        Nesta etapa, fizemos o negativo da imagem de acordo com os canais escolhidos. Essa tarefa consistiu em pegar o complemento da imagem (no canal especificado) para 255.
+
+                        ## Negativo Y
+                        Nesta opção, é feito o mesmo procedimento descrito no Negativo RGB, mas com uma prévia conversão ao sistema YIQ e aplicação do negativo apenas no canal Y.
+
+                        ## Sobel
+                        No filtro de sobel é aplicada uma máscara (horizontal ou vertical) 3X3 que é responsável pro identificar bordas na imagem (contrastes).
+
+                        As máscaras são as seguintes:
+                        
+                        * Vertical
+                        $$
+                            \begin{bmatrix}
+                            -1 & 0 & 1 \\[0.3em]  
+                            -2 & 0 & 2 \\[0.3em]  
+                            -1 & 0 & 1
+                            \end{bmatrix}
+                        $$
+
+                        * Horizontal
+                        $$
+                            \begin{bmatrix}
+                            -1 & -2 & -1 \\[0.3em]  
+                            0 & 0 & 0 \\[0.3em]  
+                            1 & 2 & 1
+                            \end{bmatrix}
+                        $$
+
+                        ## Média
+                        A aplicação do filtro média consiste em uma média dos pixels dentro da janela escolhida. Isto é, se escolhermos um filtro 3x3, daremos ao pixel central o valor da média dos 9 pixels que passaram pelo filtro.
+                        
+                        $$
+                            \begin{bmatrix}
+                            \frac{1}{9} & \frac{1}{9} & \frac{1}{9} \\[0.3em]  
+                            \frac{1}{9} & \frac{1}{9} & \frac{1}{9} \\[0.3em]  
+                            \frac{1}{9} & \frac{1}{9} & \frac{1}{9}
+                            \end{bmatrix}
+                        $$
+                        
+                        ## Mediana
+                        Por fim, o filtro mediana consiste em uma janela mxn que retorna o valor do pixel que está presente no meio da distribuição ordenada dos pixels.
                         """)
 
 elif select == "Correlação Normalizada":
@@ -249,9 +393,26 @@ elif select == "Correlação Normalizada":
             r.subheader("Imagem Transformada")
             r.image(tranf_image, use_column_width=True)
 
-            r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
+            transformed_image = Image.fromarray(tranf_image.astype('uint8'))
+
+            r.markdown(get_image_download_link(transformed_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
 
         if st.checkbox('Explicação sobre aplicamos esse filtro para você'):
-            st.markdown("""
-                        ## Explicação massa demais!
+            st.markdown(r"""
+                        ## O que é um coeficiente de correlação?
+                        Estatisticamente, a correlação entre duas variáveis é uma medida de similaridade entre essas. O coeficiente de correlação que utilizamos nessa demonstração é o coeficiente de correlação linear de Pearson, que entre as variáveis **a** e **b** é dado por:
+
+                        $$
+                        r = \frac{(a - \mu_{a} )}{\left | a - \mu_{a}  \right |} \times \frac{(b - \mu_{b} )}{\left | b - \mu_{b}  \right |}
+                        $$
+
+                        Sendo **r** o coeficiente de correlação linear de Pearson.
+
+
+                        ## O que é uma correlação normalizada?
+
+                        A correlação normalizada é feita com o objetivo de detecar os pontos de uma imagem(ou sinal) que são mais semelhantes aos pontos de uma determinada máscara. Ao passar uma outra imagem como máscara, é possível detectar que pontos da imagem original que são mais parecidos (ou correlacionados) com essa.
+
+                        Logo, a correlação normalizada entre um sinal **s** e uma máscara **h**, é equivalente ao sinal **g**, em que cada amostra é o coeficiente de correlação linear de Pearson entre **s** e **h** em cada posição da máscara em relação ao sinal.
+
                         """)
