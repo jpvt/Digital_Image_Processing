@@ -458,6 +458,14 @@ elif select == "DCT bidimensional":
 
         st.image(output, use_column_width=True)
 
+        st.write(output)
+
+        reverse = Image.fromarray(dct.get_inverse_bidimensional_dct().astype('uint8'))
+
+        st.write(reverse)
+
+        st.image(reverse , use_column_width=True)
+
         # if select_filter == "Negativo RGB":
             
         #     filter = Filter()
