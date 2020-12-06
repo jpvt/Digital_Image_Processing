@@ -1,6 +1,7 @@
 from opendip.converter import Converter
 from opendip.filter import Filter
 from opendip.correlator import Correlator
+from opendip.dct import DCT
 from io import BytesIO
 import base64
 import numpy as np
@@ -28,7 +29,7 @@ st.title("OpenDIP - Dashboard de Demonstração")
 
 
 st.sidebar.title("Configurações")
-select = st.sidebar.selectbox('Escolha a opção que deseja visualizar', ["Introdução","Conversor RGB-YIQ-RGB", "Aplicação de Filtros", "Correlação Normalizada"])
+select = st.sidebar.selectbox('Escolha a opção que deseja visualizar', ["Introdução","Conversor RGB-YIQ-RGB", "Aplicação de Filtros", "Correlação Normalizada", "DCT bidimensional"])
 
 
 
@@ -416,3 +417,82 @@ elif select == "Correlação Normalizada":
                         Logo, a correlação normalizada entre um sinal **s** e uma máscara **h**, é equivalente ao sinal **g**, em que cada amostra é o coeficiente de correlação linear de Pearson entre **s** e **h** em cada posição da máscara em relação ao sinal.
 
                         """)
+
+elif select == "DCT bidimensional":
+    st.header("Aplicação da DCT bidimensional")
+    dct = DCT()
+
+    left_column, right_column = st.beta_columns(2)
+
+    with left_column:
+
+        uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja", type= ['png', 'jpg'] )
+
+    with right_column:
+
+        select_filter = st.selectbox('Selecione o n que deseja aplicar', [0, 1, 2, 3, 10])
+
+        # if select_filter == 'Sobel':
+
+        #     select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
+        #     mode_filter = st.selectbox("Selecione o modo do filtro", ["horizontal","vertical"])
+
+        # elif select_filter == "Negativo RGB" : 
+
+        #     redPixel = st.checkbox('Negativo na banda R')
+        #     greenPixel = st.checkbox('Negativo na banda G')
+        #     bluePixel = st.checkbox('Negativo na banda B')
+        
+        # elif select_filter == "Média" or select_filter == "Mediana":
+        #     select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
+        #     vertical = st.number_input("Digite o tamanho vertical do box", min_value=1, step=1)
+        #     horizontal = st.number_input("Digite o tamanho horizontal do box", min_value=1, step = 1)
+
+    if uploaded_file is not None:
+        # orig_image = Image.open(uploaded_file)
+        dct = DCT()
+
+        returned_image = dct.get_bidimensional_dct(uploaded_file)
+
+        output = Image.fromarray(returned_image.astype('uint8'))
+
+        st.image(output, use_column_width=True)
+
+        # if select_filter == "Negativo RGB":
+            
+        #     filter = Filter()
+        #     tranf_image = filter.apply_negative_filter(image_path=uploaded_file, R=redPixel, G=greenPixel, B=bluePixel)
+
+        # if select_filter == "Negativo Y":
+
+        #     filter = Filter()
+        #     tranf_image = filter.apply_negative_filter_in_y(image_path=uploaded_file)
+
+        # if select_filter == "Sobel":
+            
+        #     filter = Filter()
+        #     _ , _, transf_arr = filter.apply_sobel_filter(image_path=uploaded_file, mode=mode_filter, zero_padding=select_padding)
+        #     tranf_image = Image.fromarray(transf_arr.astype('uint8'))
+
+        # if select_filter == "Média":
+           
+        #     filter = Filter()
+        #     img, preprocessed, output = filter.apply_box_filter(image_path=uploaded_file, box_shape=(vertical, horizontal), zero_padding=select_padding)
+        #     tranf_image = Image.fromarray(output.astype('uint8'))
+
+        # if select_filter == "Mediana":
+
+        #     filter = Filter()
+        #     img, preprocessed, output = filter.apply_median_filter(image_path=uploaded_file, filter_shape=(vertical, horizontal), zero_padding=select_padding)
+        #     tranf_image = Image.fromarray(output.astype('uint8'))
+
+
+        # l, r = st.beta_columns(2)
+
+        # l.subheader("Imagem Original")
+        # l.image(orig_image, use_column_width=True)
+
+        # r.subheader("Imagem Transformada")
+        # r.image(tranf_image, use_column_width=True)
+
+        # r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
