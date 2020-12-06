@@ -1,177 +1,108 @@
 from PIL import Image
 import numpy as np
+import matplotlib.pyplot as plt
 
 class DCT:
-    
     def __init__(self):
-        self.image = None
+        self.input_dct2d = None
+        self.output_dct2d = None
+        
+        self.input_idct2d = None
+        self.output_idct2d = None
 
-    def get_bidimensional_dct(self, image_path):
-        self.image = np.array(Image.open(image_path).convert('L'))
+    def get_2d_dct(self, image, n_coef = 0):
+        self.input_dct2d = image
 
-        np.savetxt("entry.csv", self.image, delimiter=",")
+        output = np.zeros(image.shape)
 
-        self.resulting_image = np.zeros(self.image.shape)
-
-        R = self.resulting_image.shape[0]
-        C = self.resulting_image.shape[1]
+        R = output.shape[0]
+        C = output.shape[1]
 
         for k in range(R):
-
-            if k == 0:
-                ck = np.sqrt(1/2)
-            else:
-                ck = 1
-            
+            ck = np.sqrt(0.5) if k == 0 else 1
             for l in range(C):
-
-                if l == 0:
-                    cl = np.sqrt(1/2)
-                else:
-                    cl = 1
- 
+                cl = np.sqrt(0.5) if l == 0 else 1
                 for m in range(R):
                     for n in range(C):
-                        self.resulting_image[k][l] += self.image[k][l] * (np.cos((2 * m  + 1) * k * np.pi)/ ( 2 * R )) * (np.cos((2 * n + 1) * l * np.pi) / 2 * C)
-                
-                self.resulting_image[k][l] *= ck * cl
+                        output[k][l] += image[m][n] * np.cos(((2*m + 1) * k*np.pi)/(2*R)) * np.cos(((2*n + 1) * l*np.pi)/(2*C))
+                output[k][l] *= ck * cl
 
-        self.resulting_image *= 2 / np.sqrt(R*C)
-
-        np.savetxt("dct2.csv", self.resulting_image, delimiter=",")
-
-        return self.resulting_image
-    
-    
-    def get_bidimensional_dct_sep(self, image_path, n_coef = 0):
-
-        self.image = np.array(Image.open(image_path).convert('L'))
-        self.resulting_image = np.zeros(self.image.shape)
-
-        R = self.resulting_image.shape[0]
-        C = self.resulting_image.shape[1]
-
-        for k in range(R):
-
-            self.resulting_image[k, :] = self._get_onedimensional_dct(self.image[k, :], n_coef)
-        
-        for l in range(C):
-
-            self.resulting_image[:, l] = self._get_onedimensional_dct(self.image[:, l], n_coef)
-
-        return self.resulting_image
-        
-        
-    def _get_onedimensional_dct(self, image, n_coef = 0):
-
-        resulting_image = np.zeros(image.shape)
-
-        N = len(self.image)
-
-        for k in range(N):
-            sum = 0
-
-            for l in range(N):
-
-                sum += image[l] * np.cos(2 * np.pi * k / (2.0 * N) * l + (k*np.pi)/(2.0*N))
-
-            ck = np.sqrt(1/2) if k == 0 else 1
-            resulting_image[k] = np.sqrt(2.0/N) * ck * sum
+        output *= 2.0/np.sqrt(R*C)
 
         if n_coef > 0:
+            output.sort()
+            for i in range(n_coef, n):
+                output[i] = 0
 
-            resulting_image.sort()
-
-            for i in range(n_coef, N):
-
-                resulting_image[i] = 0
-
-        return resulting_image
-
-    def preserve_levels(self, n):
-        pass
-
-    def get_inverse_bidimensional_dct(self):
-        self.inverse_transformed_image = np.zeros(self.image.shape)
-
-        R = self.resulting_image.shape[0]
-        C = self.resulting_image.shape[1]
-
-        for m in range(R):
-
-            for n in range(C):
- 
-                for k in range(R):
-                    
-                    if k == 0:
-                        ck = np.sqrt(1/2)
-                    else:
-                        ck = 1
-                        
-                    for l in range(C):
-
-                        if l == 0:
-                            cl = np.sqrt(1/2)
-                        else:
-                            cl = 1
-                        
-                        self.inverse_transformed_image[m][n] += ck * cl * self.resulting_image[k][l] * (np.cos((2 * m  + 1) * k * np.pi)/ ( 2 * R )) * (np.cos((2 * n + 1) * l * np.pi) / 2 * C)
-
-        self.inverse_transformed_image *= (2 / np.sqrt(R*C))
-
-        np.savetxt("rdct2.csv", self.inverse_transformed_image, delimiter=",")
-
-        return self.inverse_transformed_image
-    
-    def get_inverse_bidimensional_dct_sep(self):
-        self.inverse_transformed_image = np.zeros(self.resulting_image.shape)
-
-        R = self.inverse_transformed_image.shape[0]
-        C = self.inverse_transformed_image.shape[1]
-
-        row = np.zeros_like(self.resulting_image)
-        col = np.zeros_like(self.resulting_image)
-
-        for m in range(R):
-
-            row[m, :]  = self._get_onedimensional_idct(self.resulting_image[m,:])
-
-        for n in range(C):
-
-            col[:, n] = self._get_onedimensional_idct(row[m,:])
-
-        self.inverse_transformed_image = col
-
-        return self.inverse_transformed_image
-
+        self.output_dct2d = output
+        return output
         
-    def _get_onedimensional_idct(self, image):
+    def get_2d_dct_sep(self, image, n_coef = 0):
+        self.input_dct2d = image
+        
+        output = np.zeros(image.shape)
+        
+        for row in range(image.shape[0]):
+            output[row, :] = self.get_1d_dct(image[row, :], n_coef)
+        
+        for column in range(image.shape[1]):
+            output[:, column] = self.get_1d_dct(output[:, column], n_coef)
+        
+        self.output_dct2d = output
+        return output
+    
+    def get_1d_dct(self, image, n_coef = 0):
+        output = np.zeros(image.shape)
+        n = len(image)
 
-        N = len(image)
-        inverse_transformed_image = np.zeros_like(image).astype(np.float32)
+        for k in range(n):
+            ck = np.sqrt(0.5) if k == 0 else 1
+            for i in range(n):
+                output[k] += image[i] * np.cos(2 * np.pi * k / (2.0 * n) * i + (k * np.pi) / (2.0 * n))
+            output[k] *= ck
 
-        for i in range(N):
-            sum = 0
+        output *= np.sqrt(2.0/n)
 
-            for k in range(N):
+        if n_coef > 0:
+            output.sort()
+            for i in range(n_coef, n):
+                output[i] = 0
 
-                ck = np.sqrt(1/2) if k == 0 else 1
-                sum += ck * image[k] * np.cos(2*np.pi*k/(2.0*N) * i + (k*np.pi)/(2.0*N))
+        return output
+    
+    def get_inv_2d_dct(self, image = None):
+        
+        if type(image) == type(None):
+            image = self.output_dct2d
+            
+        self.input_idct2d = image
+        
+        output = np.zeros(image.shape)
 
+        for row in range(image.shape[0]):
+            output[row, :] = self.get_inv_1d_dct(image[row, :])
+            
+        for column in range(image.shape[1]):
+            output[:, column] = self.get_inv_1d_dct(output[:, column])
+        
+        self.output_idct2d = output
+        return output
+        
+    def get_inv_1d_dct(self, image):
+        output = np.zeros(image.shape)
+        n = len(image)
 
-            inverse_transformed_image[i] = np.sqrt(2.0/N) * sum
+        for i in range(n):
+            for k in range(n):
+                ck = np.sqrt(0.5) if k == 0 else 1
+                output[i] += ck * image[k] * np.cos(2 * np.pi * k / (2.0 * n) * i + (k * np.pi) / (2.0 * n))
+            output[i] *= np.sqrt(2.0 / n)
 
-        return inverse_transformed_image
-
-
-    def execute_pipeline(self, image_path, n, two_d=False):
-        if two_d:
-            self.get_bidimensional_dct(image_path)
-        else:
-            self.get_onedimensional_dct(rotation="vertical")
-            self.get_onedimensional_dct(rotation="horizontal")
-
-        self.preserve_levels(n)
-        self.get_inverse_bidimensional_dct()
-
-        pass
+        return output
+    
+    def show_process(self):
+        fig, axs = plt.subplots(1, 3, figsize = (16,16))
+        axs[0].imshow(self.input_dct2d, cmap = 'gray')
+        axs[1].imshow(self.output_dct2d, cmap = 'gray')
+        axs[2].imshow(self.output_idct2d, cmap = 'gray')
+        plt.show()
