@@ -432,23 +432,13 @@ elif select == "DCT bidimensional":
         sep = st.checkbox("Aperte para usar separabilidade")
 
         if sep:
-            select_n = st.selectbox('Selecione o n que deseja aplicar', [0, 1, 2, 3, 10], index=0)
+            if st.checkbox("Aperte para usar porcentagem"):
 
-        # if select_filter == 'Sobel':
+                select_n = st.number_input('Selecione o n que deseja aplicar')
 
-        #     select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
-        #     mode_filter = st.selectbox("Selecione o modo do filtro", ["horizontal","vertical"])
+            else:
+                select_n = st.selectbox('Selecione o n que deseja aplicar', [0,1,2,3,10], index = 0)
 
-        # elif select_filter == "Negativo RGB" : 
-
-        #     redPixel = st.checkbox('Negativo na banda R')
-        #     greenPixel = st.checkbox('Negativo na banda G')
-        #     bluePixel = st.checkbox('Negativo na banda B')
-        
-        # elif select_filter == "Média" or select_filter == "Mediana":
-        #     select_padding = st.checkbox('Aperte caso deseja utilizar Padding')
-        #     vertical = st.number_input("Digite o tamanho vertical do box", min_value=1, step=1)
-        #     horizontal = st.number_input("Digite o tamanho horizontal do box", min_value=1, step = 1)
 
     if uploaded_file is not None:
         orig_image = np.array(Image.open(uploaded_file).convert('L'))

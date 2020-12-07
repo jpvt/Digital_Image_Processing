@@ -65,6 +65,10 @@ class DCT:
 
         output *= np.sqrt(2.0/n)
 
+        if type(n_coef) == float or type(n_coef) == np.float32:
+            n_coef = int(n_coef * len(output))
+
+
         if n_coef > 0:
             output.sort()
             for i in range(n_coef, n):
