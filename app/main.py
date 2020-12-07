@@ -429,8 +429,10 @@ elif select == "DCT bidimensional":
         uploaded_file = st.file_uploader("Escolha uma imagem RGB que deseja", type= ['png', 'jpg'] )
 
     with right_column:
+        sep = st.checkbox("Aperte para usar separabilidade")
 
-        select_filter = st.selectbox('Selecione o n que deseja aplicar', [0, 1, 2, 3, 10])
+        if sep:
+            select_n = st.selectbox('Selecione o n que deseja aplicar', [0, 1, 2, 3, 10], index=0)
 
         # if select_filter == 'Sobel':
 
@@ -449,58 +451,24 @@ elif select == "DCT bidimensional":
         #     horizontal = st.number_input("Digite o tamanho horizontal do box", min_value=1, step = 1)
 
     if uploaded_file is not None:
-        # orig_image = Image.open(uploaded_file)
-        dct = DCT()
+        orig_image = np.array(Image.open(uploaded_file).convert('L'))
 
-        returned_image = dct.get_bidimensional_dct(uploaded_file)
+        if sep:
+            dct.get_2d_dct_sep(orig_image, select_n)
+            dct.get_inv_2d_dct_sep()
+        else: 
+            dct.get_2d_dct(orig_image)
+            dct.get_inv_2d_dct()
 
-        output = Image.fromarray(returned_image.astype('uint8'))
+        input_image, output_2dct, output_inv_2dct = dct.show_process()
 
-        st.image(output, use_column_width=True)
+        l, r, e = st.beta_columns(3)
 
-        st.write(output)
+        l.subheader("Imagem Original")
+        l.image(input_image, use_column_width=True)
 
-        reverse = Image.fromarray(dct.get_inverse_bidimensional_dct().astype('uint8'))
+        r.subheader("2D DCT")
+        r.image(Image.fromarray(output_2dct.astype("uint8")), use_column_width=True)
 
-        st.write(reverse)
-
-        st.image(reverse , use_column_width=True)
-
-        # if select_filter == "Negativo RGB":
-            
-        #     filter = Filter()
-        #     tranf_image = filter.apply_negative_filter(image_path=uploaded_file, R=redPixel, G=greenPixel, B=bluePixel)
-
-        # if select_filter == "Negativo Y":
-
-        #     filter = Filter()
-        #     tranf_image = filter.apply_negative_filter_in_y(image_path=uploaded_file)
-
-        # if select_filter == "Sobel":
-            
-        #     filter = Filter()
-        #     _ , _, transf_arr = filter.apply_sobel_filter(image_path=uploaded_file, mode=mode_filter, zero_padding=select_padding)
-        #     tranf_image = Image.fromarray(transf_arr.astype('uint8'))
-
-        # if select_filter == "Média":
-           
-        #     filter = Filter()
-        #     img, preprocessed, output = filter.apply_box_filter(image_path=uploaded_file, box_shape=(vertical, horizontal), zero_padding=select_padding)
-        #     tranf_image = Image.fromarray(output.astype('uint8'))
-
-        # if select_filter == "Mediana":
-
-        #     filter = Filter()
-        #     img, preprocessed, output = filter.apply_median_filter(image_path=uploaded_file, filter_shape=(vertical, horizontal), zero_padding=select_padding)
-        #     tranf_image = Image.fromarray(output.astype('uint8'))
-
-
-        # l, r = st.beta_columns(2)
-
-        # l.subheader("Imagem Original")
-        # l.image(orig_image, use_column_width=True)
-
-        # r.subheader("Imagem Transformada")
-        # r.image(tranf_image, use_column_width=True)
-
-        # r.markdown(get_image_download_link(tranf_image, 'Clique aqui para baixar a imagem transformada'), unsafe_allow_html=True)
+        e.subheader("2D INV DCT")
+        e.image(output_inv_2dct.astype("uint8"), use_column_width=True)
